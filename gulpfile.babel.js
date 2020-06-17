@@ -30,7 +30,7 @@ const routes = {
         webserver: "./dist"
     },
     font: {
-        src: "./src/font",
+        src: "./src/font/*",
         dest: "./dist/font"
     },
     img: {
@@ -80,12 +80,13 @@ const routes = {
         del : "/dist/js/*.js"
     },
     gh: {
-        except: ["./dist/**/*", "!./dist/**/*.map"]
+        except: ["./dist/**", "!./dist/css/*.map"]
     }
 };
 
 // clean function
-const distClean = () => del(["dist/", ".publish"]);
+const distClean = () => del("dist/");
+const pubClean = () => del(".publish");
 const cssLibsClean = () => del(routes.scss.dest.libs);
 const jsLibsClean = () => del(routes.js.dest.libs);
 const cssClean = () => del(routes.scss.del);
@@ -276,4 +277,4 @@ const live = parallel(webserver, makeIndexFile, gulpWatch);
 
 export const build = series(prepare, destLibs, assets);
 export const dev = series(build, live);
-export const deploy = series(build, gh, distClean);
+export const deploy = series(build, makeIndexFile, gh, pubClean);
